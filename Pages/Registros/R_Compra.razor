@@ -38,7 +38,7 @@
                 <div class="card-body">
                     <div class="input-group d-flex align-items-end">
                         <div class="col-6 flex-fill mx-1">
-                             @* Prodcutos *@
+                             @* Productos *@
                             <label class="form-label">Productos</label>
                             <InputSelect @bind-Value="compraDetalle.ProductoId" class='form-select'>
                             <option value="0" selected="selected" hidden="hidden" disabled="disabled">- Selecciona un producto a Comprar -</option>
@@ -51,12 +51,12 @@
                          @* Cantidad a agg de cada producto *@
                         <div class="col-3 flex-fill mx-2">
                             <label class="from-label">Cantidad</label>
-                            <InputNumber @bind-Value="compraDetalle.Cantidad" class="form-control"></InputNumber>
-                            <ValidationMessage For="@(() => compraDetalle.Cantidad)" />
-                        </div>
-                         @* Boton de agg Detalle *@
-                        <div class="input-group-append">
-                            <button type="button" class="btn btn-success oi oi-plus" @onclick="AggDetalle"></button>
+                            <div id="buscar" class="input-group-append">
+                                <InputNumber @bind-Value="compraDetalle.Cantidad" class="form-control"></InputNumber>
+                                <ValidationMessage For="@(() => compraDetalle.Cantidad)" />
+                                @* Boton de agg Detalle *@
+                                <button type="button" class="btn btn-success oi oi-plus" @onclick="AggDetalle"></button>
+                            </div>
                         </div>
                     </div>
                     
