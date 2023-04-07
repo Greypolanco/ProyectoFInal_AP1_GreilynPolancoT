@@ -3,8 +3,7 @@ public class Proveedores
 {
     [Key]
     public int ProveedorId { get; set; }
-
-    public DateTime Fecha { get; set; }
+    public DateTime Fecha { get; set; } = DateTime.Today;
     [Required (ErrorMessage ="Nombre del Proveedor es requerido")]
     public string Nombre { get; set; }= string.Empty;
      [Required (ErrorMessage ="Empresa del Proveedor es requerida")]
