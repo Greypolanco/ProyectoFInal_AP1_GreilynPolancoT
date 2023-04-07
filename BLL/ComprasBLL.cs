@@ -42,7 +42,7 @@ public class ComprasBLL
             Productos? producto;
             if(CompraAnterior != null){
                 foreach(var detalle in CompraAnterior.CompraDetalles){
-                    producto = _contexto.Productos.Find(detalle.CompraDetalleId);
+                    producto = _contexto.Productos.Find(detalle.ProductoId);
 
                     if(producto !=null)
                         producto.Existencia += detalle.Cantidad;
@@ -51,10 +51,13 @@ public class ComprasBLL
             _contexto.Database.ExecuteSqlRaw($"DELETE FROM CompraDetalles WHERE CompraId = {compra.CompraId}");
             foreach (var New in compra.CompraDetalles)
             {
-                producto = _contexto.Productos.Find(New.CompraDetalleId);
-                if(producto != null)
+                producto = _contexto.Productos.Find(New.ProductoId);
+                if(producto != null){
                     producto.Existencia -= New.Cantidad;
-                _contexto.Entry(New).State = EntityState.Added;
+                    _contexto.Entry(New).State = EntityState.Added;
+                    _contexto.Entry(producto).State = EntityState.Modified;
+                }
+
             }
             _contexto.Entry(compra).State = EntityState.Modified;
             paso= _contexto.SaveChanges() > 0;
