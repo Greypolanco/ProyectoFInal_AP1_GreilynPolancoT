@@ -2,9 +2,8 @@ public class Productos
 {
     [Key]
     public int ProductoId { get; set; }
-    [Required (ErrorMessage ="Descripcion es requerida")]
-
     public DateTime Fecha { get; set; } = DateTime.Today;
+    [Required (ErrorMessage ="Descripcion es requerida")]
     public string  Descripcion { get; set; } = string.Empty;
     [Required (ErrorMessage ="costo es requerido")]
     [Range(5,3500,ErrorMessage ="El costo requerido es {1} a {2}$")]
