@@ -1,11 +1,15 @@
+global using ProyectoFinal_AP1_GreilynPolancoT.Data;
+global using Microsoft.EntityFrameworkCore;
+global using System.ComponentModel.DataAnnotations;
+global using System.ComponentModel.DataAnnotations.Schema;
+global using System.Linq.Expressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.EntityFrameworkCore;
 using ProyectoFinal_AP1_GreilynPolancoT.Areas.Identity;
-using ProyectoFinal_AP1_GreilynPolancoT.Data;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +23,13 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
-builder.Services.AddSingleton<WeatherForecastService>();
+
+
+//bll 
+builder.Services.AddScoped<CategoriaBLL>();
+builder.Services.AddScoped<ComprasBLL>();
+builder.Services.AddScoped<ProductosBLL>();
+builder.Services.AddScoped<ProveedoresBLL>();
 
 var app = builder.Build();
 
