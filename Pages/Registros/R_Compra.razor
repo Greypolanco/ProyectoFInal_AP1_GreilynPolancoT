@@ -1,6 +1,7 @@
 @page "/compra"
 @inject ComprasBLL comprabll
 @inject ProductosBLL productobll
+@inject ProveedoresBLL proveedorbll
 @inject NotificationService notificationService
 
 <EditForm Model="compra" OnValidSubmit="Guardar" >
@@ -64,16 +65,19 @@
                             <th>Producto</th>
                             <th>Descripcion</th>
                             <th>Cantidad</th>
+                            <th>Precio</th>
                             <th></th>
                         </thead>
                         <tbody>
                             @foreach(var Item in compra.CompraDetalles)
                             {
                                 var productoEncontrado = BuscarProducto(Item.ProductoId);
+                                PrecioTotal += productoEncontrado.Precio;
                                 <tr>
                                     <td>@Item.ProductoId</td>
                                     <td>@productoEncontrado.Descripcion</td>
                                     <td>@Item.Cantidad</td>
+                                    <td>@productoEncontrado.Precio</td>
                                      @* Boton de Eliminar *@
                                     <td><button type="button" class="btn btn-danger oi oi-x" @onclick=@(() => EliminarDetalle(Item))></button></td>
                                 </tr>
@@ -81,11 +85,27 @@
                         </tbody>
                     </table>
                      @* Cantidad total y su sumatoria *@
-                    <label class="form-label">Cantidad Total : @compra.CompraDetalles.Sum(c => c.Cantidad)</label> 
+                    <label class="form-label">Cantidad Total : @compra.CompraDetalles.Sum(c => c.Cantidad)</label><br> 
+                    <label class="form-label">Precio Total : @PrecioTotal</label>
                 </div>
-            
             </div>
-         @* Botones *@
+            @* Proveedor*@
+            <div class="form-control">
+                <h5>Empresa </h5>
+                <div class="input-group d-flex align-items-end">
+                    <div class="col-6 flex mx-1">
+                        <label class="form-label">Proveedor</label>
+                        <InputSelect @bind-Value="compra.ProveedorId" class='form-select'>
+                        <option value="0" selected="selected" hidden="hidden" disabled="disable">--Seleciona el proveedor--</option>
+                        @foreach (Proveedores proveedor in ListaProveedores)
+                        {
+                            <option value="@proveedor.ProveedorId">@proveedor.Nombre (@proveedor.Empresa)</option>
+                        }
+                        </InputSelect>
+                    </div>
+                </div>
+            </div>
+        @* Botones *@
         <div class="accordion-flush">
             <button type="button" class="btn btn-primary" @onclick="Nuevo"><span class="oi oi-file"></span> Nuevo</button>
             <button type="submit" class="btn btn-success"><span class="oi oi-document"></span> Guardar</button>
@@ -100,9 +120,12 @@
     public Compras compra { get; set; } = new Compras();
     public CompraDetalles compraDetalle { get; set; } = new CompraDetalles();
     public List<Productos> Lista { get; set; } = new List<Productos>();
+    public List<Proveedores> ListaProveedores { get; set; } = new List<Proveedores>();
+    public float PrecioTotal { get; set; } = 0;
     void Nuevo(){
         this.compra = new Compras();
         compraDetalle = new CompraDetalles();
+        PrecioTotal =0;
     }
 
     void Buscar(){
@@ -156,6 +179,7 @@
     protected override void OnInitialized()
     {
         Lista = productobll.GetList(p => true);
+        ListaProveedores = proveedorbll.GetList(p => true);
         if(CompraID !=0){
             this.compra.CompraId = CompraID;
             Buscar();
