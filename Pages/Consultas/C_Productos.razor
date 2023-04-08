@@ -2,14 +2,81 @@
 
 @inject ProductosBLL productobll
 @inject CategoriaBLL categoriabll
+@inject NotificationService notification
 
 <EditForm Model="Lista">
+    <div id="C_Productos" class="card">
+        <div class="card-header">
+            <h5 id="titulo">Consulta de Productos</h5>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <form>
+            <div class="input-group d-flex align-items-end">
+
+                @* Filtro *@
+                <div id="Filtro"class="input-group">
+                    <span class="input-group-text">Filtro</span>
+                    <InputSelect class="form-select text-14 col-3" @bind-Value="Filtro">
+                        <option value="0">Sin FIltro</option>
+                        <option value="1" selected>Id</option>
+                        <option value="2">Descripción</option>
+                        <option value="3">Precio</option>
+                        
+                    </InputSelect>
+                </div>
+
+                @* Fecha Desde *@
+                <div id="Desde" class="input-group" >
+                    <span class="input-group-text">Desde</span>
+                    <InputDate @bind-Value="FechaDesde" class="form-control col-4" />
+                </div>
+
+                @* Fecha Hasta*@
+                <div id="IDI" class="input-group">
+                    <span class="input-group-text">Hasta</span>
+                    <InputDate @bind-Value="FechaHasta" class="form-control col-4" />
+                </div>
+                @* Criterio *@
+                @if(Filtro == 3 )
+                {
+                    <div id="IDI" class="input-group">
+                        <span class="input-group-text">Valor Minimo</span>
+                        <InputText  @bind-Value="Min" class="form-control col-4"></InputText>
+                    </div>
+                    <div id="IDI" class="input-group">
+                        <span class="input-group-text">Valor Máximo</span>
+                        <InputText  @bind-Value="Max" class="form-control col-4"></InputText>
+                    </div>
+                    @* Boton Buscar *@
+                    <button type="button" id="boton"class="btn btn-primary" @onclick="Buscar">
+                        <i class="oi oi-magnifying-glass mr-2" /> Buscar
+                    </button>
+                }
+                else{
+                    @* TextBox Busqueda *@
+                    <div class="flex-fill mx-2">
+                        <div class="input-group">
+                            <span class="input-group-text">Criterio</span>
+                            <input type="text" id="TextBusqueda" class="form-control" @bind-value="Criterio" />
+                        </div>
+                    </div>
+                    @* Boton Buscar *@
+                    <button type="button" id="boton"class="btn btn-primary" @onclick="Buscar">
+                        <i class="oi oi-magnifying-glass mr-2" /> Buscar
+                    </button>
+                }
+            </div>
+        </form>
+    </div>
     <table class="table table-hover">
         <caption>Lista De Productos</caption>
         <thead >
             <tr>
                 <th scope="col">Id</th>
-                <th scope="col">Descripcion</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">Fecha</th>
                 <th scope="col">Costo</th>
                 <th scope="col">Precio</th>
                 <th scope="col">Existencia</th>
@@ -23,6 +90,7 @@
                 <tr>
                     <td >@Item.ProductoId</td>
                     <td >@Item.Descripcion</td>
+                    <td >@Item.Fecha.ToShortDateString()</td>
                     <td >@Item.Costo</td>
                     <td >@Item.Precio</td>
                     <td >@Item.Existencia</td>
@@ -34,16 +102,20 @@
 </EditForm>
 
 @code{
+    private DateTime FechaDesde { get; set; } 
+    private DateTime FechaHasta { get; set; }
+    private string Criterio { get; set; } = string.Empty;
+    public int Filtro { get; set; }
     public List<Productos> Lista { get; set; } = new List<Productos>();
     public List<Categorias> ListaCategoria { get; set; } = new List<Categorias>();
+    public string Min { get; set; } = string.Empty;
+    public string Max { get; set; } = string.Empty;
 
     protected override void OnInitialized()
     {
-        Buscar();
-    }
-    public void Buscar(){
         Lista = productobll.GetList(p => true);
-        
+        FechaDesde = DateTime.Today;
+        FechaHasta = DateTime.Today.AddDays(2);
     }
     private  Categorias BuscarCategoria(int Id){
         Categorias categoria = new Categorias();
@@ -52,5 +124,121 @@
            return categoria = catEncontrada;
         }
         return new Categorias();
+    }
+
+    private void Buscar()
+    {
+        switch (Filtro)
+        {
+            case 0:
+            {
+                TodoLosProductos();
+                BuscarFecha();
+                break;
+            }               
+            case 1:
+            {
+                BuscarId();
+                break;
+            }
+            case 2:
+            {
+                BuscarDescripcion();
+                break;
+            }
+            case 3:
+            {
+                BuscarPrecio();
+                break;
+            }
+            
+        }
+        if (Lista.Any() == false)
+            notification.ShowNotification("Oops!","Parece que no se han encontrado resultados.", NotificationSeverity.Warning);
+    }
+    void BuscarId()
+    {
+        int buscarid = 0;
+        if (int.TryParse(Criterio, out buscarid))
+        {
+            Lista = productobll.GetList(item => item.ProductoId == buscarid 
+            && item.Fecha >= FechaDesde && item.Fecha <= FechaHasta);
+        }
+        else
+        {
+            notification.ShowNotification("Valor inválido","El valor indicado no se encuentra", NotificationSeverity.Error);
+            return;
+        }
+    }
+    void TodoLosProductos()
+    {
+        Lista = productobll.GetList(item => true);
+        Criterio = string.Empty;
+    }
+    void BuscarFecha()
+    {
+        if(Validar())
+            Lista = productobll.GetList(item => item.Fecha >= FechaDesde && item.Fecha <= FechaHasta);
+    }
+    void BuscarDescripcion()
+    {
+        if(Validar())
+        {
+            Lista = productobll.GetList(item => item.Descripcion.ToLower().Contains(Criterio.ToLower())
+            && item.Fecha >= FechaDesde && item.Fecha <= FechaHasta);
+        }
+    }
+    void BuscarPrecio()
+    {
+        float minPrice = 0, maxPrice = 0;
+        if(!string.IsNullOrEmpty(Min) && string.IsNullOrEmpty(Max))
+        {
+            float.TryParse(Min, out minPrice);
+            Max = "0";
+            float.TryParse(Max, out maxPrice);
+        }
+        if(string.IsNullOrEmpty(Min) && !string.IsNullOrEmpty(Max))
+        {
+            float.TryParse(Max, out maxPrice);
+            Min = "0";
+            float.TryParse(Min, out minPrice);
+        }
+        if (float.TryParse(Min, out minPrice) && float.TryParse(Max, out maxPrice))
+        {
+            if(minPrice >= 0 && maxPrice == 0)
+            {
+                Lista = productobll.GetList(item => item.Precio >= minPrice && item.Precio <= float.MaxValue
+                && item.Fecha >= FechaDesde && item.Fecha <= FechaHasta);
+            }
+            else if(minPrice <= 0 && maxPrice >=0)
+            {
+                Lista = productobll.GetList(item => item.Precio >= 0 && item.Precio <= maxPrice
+                && item.Fecha >= FechaDesde && item.Fecha <= FechaHasta);
+            }
+            else
+            {
+                Lista = productobll.GetList(item => item.Precio >= minPrice && item.Precio <= maxPrice
+                && item.Fecha >= FechaDesde && item.Fecha <= FechaHasta);
+            }
+        }
+        else
+        {
+            notification.Error("Se han proporcionado valores no numéricos para trabajar.");
+        }
+    }
+    bool Validar()
+    {
+        if(FechaDesde > FechaHasta)
+        {
+            notification.Error("La fehca inicial no puede ser mayor que la fecha límite.");
+            return false;
+        }
+        if(string.IsNullOrEmpty(Criterio) && Filtro != 0)
+        {
+            notification.Error("Debe colocar un criterio de búsqueda válido.");
+            return false;
+        }
+        else
+            return true;
     }
 }
