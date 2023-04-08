@@ -88,6 +88,8 @@
     protected override void OnInitialized()
     {
         Lista = proveedorbll.GetList(p => true);
+        FechaDesde = DateTime.Today;
+        FechaHasta = DateTime.Today.AddDays(2);
     }
     public void Buscar()
     {

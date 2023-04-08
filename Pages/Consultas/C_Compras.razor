@@ -1,36 +1,164 @@
 @page "/consultacompra"
 
 @inject ComprasBLL comprabll
-   
-<table class="table table-hover">
-    <caption>Lista De Compras</caption>
-    <thead >
-        <tr>
-            <th scope="col">Id</th>
-            <th scope="col">Fecha</th>
-            <th scope="col">Concepto</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var Item in Lista)
-        {
-            <tr>
-                <td >@Item.CompraId</td>
-                <td >@Item.Fecha.ToShortDateString()</td>
-                <td >@Item.Concepto</td>
-            </tr>
-        }
-    </tbody>
-</table>
+@inject NotificationService notification
 
+<EditForm Model="Lista">
+   <div id="C_Productos" class="card">
+        <div class="card-header">
+            <h5 id="titulo">Consulta de Proveedores</h5>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <form>
+            <div class="input-group d-flex align-items-end">
+
+                @* Filtro *@
+                <div id="Filtro"class="input-group">
+                    <span class="input-group-text">Filtro</span>
+                    <InputSelect class="form-select text-14 col-3" @bind-Value="Filtro">
+                        <option value="0">Sin FIltro</option>
+                        <option value="1" selected>Id</option>
+                        <option value="2">Concepto</option>
+                    </InputSelect>
+                </div>
+
+                @* Fecha Desde *@
+                <div id="Desde" class="input-group" >
+                    <span class="input-group-text">Desde</span>
+                    <InputDate @bind-Value="FechaDesde" class="form-control col-4" />
+                </div>
+
+                @* Fecha Hasta*@
+                <div id="IDI" class="input-group">
+                    <span class="input-group-text">Hasta</span>
+                    <InputDate @bind-Value="FechaHasta" class="form-control col-4" />
+                </div>
+                
+                @* TextBox Busqueda *@
+                <div class="flex-fill mx-2">
+                    <div class="input-group">
+                        <span class="input-group-text">Criterio</span>
+                        <input type="text" id="TextBusqueda" class="form-control" @bind-value="Criterio" />
+                    </div>
+                </div>
+                @* Boton Buscar *@
+                <button type="button" id="boton"class="btn btn-primary" @onclick="Buscar">
+                    <i class="oi oi-magnifying-glass mr-2" /> Buscar
+                </button>
+            </div>
+        </form>
+    </div>
+    <table class="table table-hover">
+        <caption>Lista De Compras</caption>
+        <thead >
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Concepto</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var Item in Lista)
+            {
+                <tr>
+                    <td >@Item.CompraId</td>
+                    <td >@Item.Fecha.ToShortDateString()</td>
+                    <td >@Item.Concepto</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</EditForm>
 @code{
+    private DateTime FechaDesde { get; set; } 
+    private DateTime FechaHasta { get; set; }
+    private string Criterio { get; set; } = string.Empty;
+    public int Filtro { get; set; }
     public List<Compras> Lista { get; set; } = new List<Compras>();
+    public string Min { get; set; } = string.Empty;
+    public string Max { get; set; } = string.Empty;
     protected override void OnInitialized()
     {
-        Buscar();
-    }
-    public void Buscar(){
         Lista = comprabll.GetList(p => true);
+        FechaDesde = DateTime.Today;
+        FechaHasta = DateTime.Today.AddDays(2);
+        
+    }
+    public void Buscar()
+    {
+        switch (Filtro)
+        {
+            case 0:
+            {
+                TodasLasCompras();
+                BuscarFecha();
+                break;
+            }               
+            case 1:
+            {
+                BuscarId();
+                break;
+            }
+            case 2:
+            {
+                BuscarCompra();
+                break;
+            }
+            
+            
+        }
+        if (Lista.Any() == false)
+            notification.ShowNotification("Oops!","Parece que no se han encontrado resultados.", NotificationSeverity.Warning);
+    }
+    void BuscarId()
+    {
+        int buscarid = 0;
+        if (int.TryParse(Criterio, out buscarid))
+        {
+            Lista = comprabll.GetList(item => item.CompraId == buscarid 
+            && item.Fecha >= FechaDesde && item.Fecha <= FechaHasta);
+        }
+        else
+        {
+            notification.ShowNotification("Valor inválido","El valor indicado no se encuentra", NotificationSeverity.Error);
+            return;
+        }
+    }
+    void TodasLasCompras()
+    {
+        Lista = comprabll.GetList(item => true);
+        Criterio = string.Empty;
+    }
+    void BuscarFecha()
+    {
+        if(Validar())
+            Lista = comprabll.GetList(item => item.Fecha >= FechaDesde && item.Fecha <= FechaHasta);
+    }
+    void BuscarCompra()
+    {
+        if(Validar())
+        {
+            Lista = comprabll.GetList(item => item.Concepto.ToLower().Contains(Criterio.ToLower())
+            && item.Fecha >= FechaDesde && item.Fecha <= FechaHasta);
+        }
+    }
+    
+    bool Validar()
+    {
+        if(FechaDesde > FechaHasta)
+        {
+            notification.Error("La fehca inicial no puede ser mayor que la fecha límite.");
+            return false;
+        }
+        if(string.IsNullOrEmpty(Criterio) && Filtro != 0)
+        {
+            notification.Error("Debe colocar un criterio de búsqueda válido.");
+            return false;
+        }
+        else
+            return true;
     }
     
 }
