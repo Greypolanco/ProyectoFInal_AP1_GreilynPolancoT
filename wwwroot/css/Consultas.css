@@ -2,3 +2,29 @@
     padding: 0.5rem; 
       
 }
+#Rango{
+    width: 150px;
+}
+#IDI{
+    width: 15rem;
+}
+#C_Productos{
+    margin:30px;
+}
+#titulo{
+    text-align:center;
+}
+#Filtro{
+    margin-right: 30px; 
+    width: 16rem;
+}
+#Desde{
+    margin-right: 10px; 
+    width: 15rem;
+}
+#boton{
+    z-index:0;
+}
+#margen{
+    display: flex;
+}
