@@ -1,2 +1,17 @@
 ﻿@page "/"
 
+<div style="display: block; margin-left:auto; margin-right:auto; width:40%;">
+    <div>
+        <img src="/Imagenes/3.jpg" class="img-fluid"  alt="Libreria Polanco">
+    </div>
+    <AuthorizeView>
+        <Authorized>
+            
+        </Authorized>
+        <NotAuthorized>
+            <div style="text-align: center;">
+                <h3>Necesita Iniciar Sección</h3>
+            </div>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
