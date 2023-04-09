@@ -28,6 +28,7 @@
             <div>
                 <label class="form-label">Concepto</label>
                 <InputText @bind-Value="compra.Concepto" class="form-control"></InputText>
+                <ValidationMessage For="@(() => compra.Concepto)" />
             </div>
         </div>
              @* Detalle de Compra *@
@@ -53,7 +54,6 @@
                             <label class="from-label">Cantidad</label>
                             <div id="buscar" class="input-group-append">
                                 <InputNumber @bind-Value="compraDetalle.Cantidad" class="form-control"></InputNumber>
-                                <ValidationMessage For="@(() => compraDetalle.Cantidad)" />
                                 @* Boton de agg Detalle *@
                                 <button type="button" class="btn btn-success oi oi-plus" @onclick="AggDetalle"></button>
                             </div>
@@ -102,6 +102,7 @@
                             <option value="@proveedor.ProveedorId">@proveedor.Nombre (@proveedor.Empresa)</option>
                         }
                         </InputSelect>
+                        <ValidationMessage For="@(() => compra.ProveedorId)" />
                     </div>
                 </div>
             </div>
@@ -243,11 +244,11 @@
 
     bool Validar(){
         string? mensajeError = string.Empty;
-        if(string.IsNullOrEmpty(compra.Concepto)){
-            mensajeError += "El concepto estestá vacío\n";
-        }
         if(compra.CompraDetalles.Count < 1){
-            mensajeError += "Debe utilizar al menos 1 producto\n";
+            mensajeError = "Debe utilizar al menos 1 producto\n";
+        }
+        if(compra.ProveedorId<=0){
+            mensajeError +="Debe agregar al proveedor";
         }
        if(mensajeError.Equals(string.Empty))
             return true;
