@@ -26,7 +26,7 @@
                 <InputDate  id="Fecha" @bind-Value="compra.Fecha" class="form-control"/>
             </div>
              @* Concepto *@
-            <div>
+            <div class="col-6">
                 <label class="form-label">Concepto</label>
                 <InputText @bind-Value="compra.Concepto" class="form-control"></InputText>
                 <ValidationMessage For="@(() => compra.Concepto)" />
@@ -109,7 +109,7 @@
             </div>
         @* Botones *@
         <div class="accordion-flush">
-            <button type="button" class="btn btn-primary" @onclick="Nuevo"><span class="oi oi-file"></span> Nuevo</button>
+            <button type="button" class="btn btn-primary" @onclick="Nuevo" ><span class="oi oi-file"></span> Nuevo </button>
             <button type="submit" class="btn btn-success"><span class="oi oi-document"></span> Guardar</button>
             <button type="button" class="btn btn-danger" @onclick="Eliminar"><span class="oi oi-delete"></span> Eliminar</button>
         </div>
