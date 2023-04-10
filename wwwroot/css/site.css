@@ -12,6 +12,9 @@ a, .btn-link {
     color: #013fbb;
 }
 
+#link{
+    color: #f8fafc;
+}
 .btn-primary {
     color: #000000;
     background-color: #f8fafc;
