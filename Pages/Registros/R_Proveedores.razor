@@ -131,14 +131,13 @@
     }
 
     bool Validar(){
-        if(string.IsNullOrEmpty(proveedor.Nombre))
+        if(proveedor.RNC <=7 || proveedor.RNC >=10 ){
+            notificationService.Error("Debe agregar RNC de 8 digitos");
             return false;
-        if(string.IsNullOrEmpty(proveedor.Empresa))
-            return false;
-        if(proveedor.RNC <=0)
-            return false;
+        }
         else
             return true;
+        
     }
 
     void ShowNotification(NotificationMessage message)
