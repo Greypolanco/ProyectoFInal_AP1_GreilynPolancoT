@@ -1,4 +1,5 @@
 @page "/proveedor"
+@page "/proveedor/{proveedorId:int}"
 @attribute [Authorize]
 @inject ProveedoresBLL proveedorbll
 @inject NotificationService notificationService
@@ -60,8 +61,14 @@
 
     public Proveedores proveedor { get; set; } = new Proveedores();
 
-    public List<Categorias> listCategorias {get; set;} = new List<Categorias>();
-        
+    protected override void OnInitialized()
+    {
+        if(proveedorId >0){
+            proveedor.ProveedorId = proveedorId;
+            Buscar();
+        }
+
+    }        
     void Nuevo(){
         this.proveedor = new Proveedores();
     }

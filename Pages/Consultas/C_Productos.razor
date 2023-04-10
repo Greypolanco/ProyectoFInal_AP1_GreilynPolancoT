@@ -81,6 +81,7 @@
                 <th scope="col">Precio</th>
                 <th scope="col">Existencia</th>
                 <th scope="col">Categoria</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -95,6 +96,7 @@
                     <td >@Item.Precio</td>
                     <td >@Item.Existencia</td>
                     <td >@Categoria.Nombre</td>
+                    <td><a href="/producto/@Item.ProductoId">Ver</a></td>
                 </tr>
             }
         </tbody>
