@@ -10,6 +10,6 @@ public class Proveedores
     public string Empresa { get; set; } = string.Empty;
 
     [Required (ErrorMessage ="La RNC de la empresa es requerida")]
-    [Range(1000,20000000,ErrorMessage ="La RNC de la empresa es requerida")]
-    public double RNC { get; set; }
+    [StringLength(8,MinimumLength =8, ErrorMessage ="El RNC es requerido 8 digitos")]
+    public string RNC { get; set; } = string.Empty;
 }
