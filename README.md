@@ -1,4 +1,4 @@
-###Sistema de Compras
+### Sistema de Compras
 Este es un sistema de compras desarrollado en C# que permite llevar un registro de productos, el cual cuenta con la categoria correspondiente, proveedores, compras y sus detalles. El sistema se diseñó para ser utilizado por una empresa que requiere llevar un control de sus compras y los productos adquiridos.
 
 ####  Características
