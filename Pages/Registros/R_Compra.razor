@@ -67,19 +67,20 @@
                             <th>Producto</th>
                             <th>Descripcion</th>
                             <th>Cantidad</th>
-                            <th>Precio</th>
+                            <th>Costo</th>
                             <th></th>
                         </thead>
                         <tbody>
                             @foreach(var Item in compra.CompraDetalles)
                             {
                                 var productoEncontrado = BuscarProducto(Item.ProductoId);
-                                PrecioTotal += productoEncontrado.Precio;
+                                CostoTotal += productoEncontrado.Costo;
+                                TotalCompra += Item.Cantidad * productoEncontrado.Costo;
                                 <tr>
                                     <td>@Item.ProductoId</td>
                                     <td>@productoEncontrado.Descripcion</td>
                                     <td>@Item.Cantidad</td>
-                                    <td>@productoEncontrado.Precio</td>
+                                    <td>@productoEncontrado.Costo</td>
                                      @* Boton de Eliminar *@
                                     <td><button type="button" class="btn btn-danger oi oi-x" @onclick=@(() => EliminarDetalle(Item))></button></td>
                                 </tr>
@@ -87,8 +88,9 @@
                         </tbody>
                     </table>
                      @* Cantidad total y su sumatoria *@
-                    <label class="form-label">Cantidad Total : @compra.CompraDetalles.Sum(c => c.Cantidad)</label><br> 
-                    <label class="form-label">Precio Total : @PrecioTotal</label>
+                    <label class="form-label">Cantidad Total : @compra.CompraDetalles.Sum(c => c.Cantidad)</label><br/> 
+                    <label class="form-label">Costo Total : @CostoTotal</label><br/>
+                    <label class="form-label">Total de Compra: @TotalCompra </label>
                 </div>
             </div>
             @* Proveedor*@
@@ -124,11 +126,12 @@
     public CompraDetalles compraDetalle { get; set; } = new CompraDetalles();
     public List<Productos> Lista { get; set; } = new List<Productos>();
     public List<Proveedores> ListaProveedores { get; set; } = new List<Proveedores>();
-    public float PrecioTotal { get; set; } = 0;
+    public float CostoTotal { get; set; } = 0;
+    public float TotalCompra { get; set; } =0;
     void Nuevo(){
         this.compra = new Compras();
         compraDetalle = new CompraDetalles();
-        PrecioTotal =0;
+        CostoTotal =0;
     }
 
     void Buscar(){
