@@ -8,10 +8,10 @@
     display: flex;
 }
 #numero{
-    width: 250px;
+    width: 100px;
 }
 #Fecha{
-    width: 250px;
+    width: 150px;
 }
 #Nombre{
     width: 350px;
