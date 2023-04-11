@@ -19,7 +19,7 @@ public class ComprasBLL
             {
                 producto = _contexto.Productos.SingleOrDefault(p => p.ProductoId == detalle.ProductoId);
                 if(producto != null){
-                    producto.Existencia -= detalle.Cantidad;
+                    producto.Existencia += detalle.Cantidad;
                     _contexto.Entry(producto).State = EntityState.Modified;
                     _contexto.Entry(detalle).State = EntityState.Added;
                 }
@@ -53,7 +53,7 @@ public class ComprasBLL
             {
                 producto = _contexto.Productos.Find(New.ProductoId);
                 if(producto != null){
-                    producto.Existencia -= New.Cantidad;
+                    producto.Existencia += New.Cantidad;
                     _contexto.Entry(New).State = EntityState.Added;
                     _contexto.Entry(producto).State = EntityState.Modified;
                 }
@@ -93,7 +93,7 @@ public class ComprasBLL
                 producto = _contexto.Productos.SingleOrDefault(p => p.ProductoId == detalle.ProductoId);
                 if(producto != null)
                 {
-                    producto.Existencia += detalle.Cantidad;
+                    producto.Existencia -= detalle.Cantidad;
                     _contexto.Entry(producto).State = EntityState.Modified;
                 }
             }
